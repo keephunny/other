@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Info.props" />
+  <PropertyGroup>
+    <PackageId>JT1078.Gateway</PackageId>
+    <Product>JT1078.Gateway</Product>
+    <Description>基于Pipeline实现的JT1078Gateway库</Description>
+    <PackageReleaseNotes>基于Pipeline实现的JT1078Gateway库</PackageReleaseNotes>
+    <DocumentationFile>JT1078.Gateway.xml</DocumentationFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Codecs\**" />
+    <Compile Remove="Http\**" />
+    <Compile Remove="Session\**" />
+    <Compile Remove="Tcp\**" />
+    <Compile Remove="Udp\**" />
+    <EmbeddedResource Remove="Codecs\**" />
+    <EmbeddedResource Remove="Http\**" />
+    <EmbeddedResource Remove="Session\**" />
+    <EmbeddedResource Remove="Tcp\**" />
+    <EmbeddedResource Remove="Udp\**" />
+    <None Remove="Codecs\**" />
+    <None Remove="Http\**" />
+    <None Remove="Session\**" />
+    <None Remove="Tcp\**" />
+    <None Remove="Udp\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JT1078.FMp4" Version="1.2.0-preview6" />
+    <PackageReference Include="JT1078.Hls" Version="1.2.0-preview6" />
+    <PackageReference Include="JT1078.Flv" Version="1.2.0-preview6" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />
+    <PackageReference Include="System.IO.Pipelines" Version="6.0.1" />
+  </ItemGroup>
+
+   <ItemGroup>
+	    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+	    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+   </ItemGroup>
+
+  <ItemGroup>
+    <!--<ProjectReference Include="..\..\..\JT1078\src\JT1078.FMp4\JT1078.FMp4.csproj" />-->
+    <ProjectReference Include="..\JT1078.Gateway.Abstractions\JT1078.Gateway.Abstractions.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="..\Info.props" />
+	<PropertyGroup>
+		<PackageId>JT1078.Flv</PackageId>
+		<Product>JT1078.Flv</Product>
+		<Description>基于JT1078的Flv视频编码器</Description>
+		<PackageReleaseNotes>基于JT1078的Flv视频编码器</PackageReleaseNotes>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<DocumentationFile>JT1078.Flv.xml</DocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\JT1078.Protocol\JT1078.Protocol.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+		<None Include="..\..\README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
+</Project>

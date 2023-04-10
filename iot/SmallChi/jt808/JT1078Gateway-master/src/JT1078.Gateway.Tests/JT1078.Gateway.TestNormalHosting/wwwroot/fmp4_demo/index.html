@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>WebSocket MSE Fmp4 demo</title>
+</head>
+<body>
+    <h1>MSE FMp4 Demo</h1>
+    <video id="stream_live" autoplay>
+        浏览器不支持
+    </video>
+    <script>
+        /* ref https://github.com/v354412101/wsPlayer.git */
+        function JT1078Player(videoId, wsUrl) {
+            this.videoId = videoId;
+            this.wsUrl = wsUrl;
+            this.ws = null;
+            this.verbose = true;
+            this.frameQueue = [];
+        }
+        JT1078Player.prototype.open = function () {
+            let sourcebuffer = null;
+            this.ws = new WebSocket(this.wsUrl);
+            this.ws.binaryType = 'arraybuffer';
+            let firstMessage = true;
+            let initMediaSource = function (avframe) {
+                let video = document.getElementById(this.videoId);
+                let mediasource = new MediaSource();
+                video.src = URL.createObjectURL(mediasource);
+                let pre_pos = 0;
+                mediasource.onsourceopen = function () {
+                    sourcebuffer = mediasource.addSourceBuffer('video/mp4; codecs=' + avframe.Codecs);
+                    sourcebuffer.onupdateend = function () {
+                        let pos = video.currentTime;
+                        if (video.buffered.length > 0) {
+                            let start = video.buffered.start(video.buffered.length - 1);
+                            let end = video.buffered.end(video.buffered.length - 1);
+                            if (this.verbose)
+                                console.log("pos=" + pos + ",start=" + start + ",end=" + end);
+                            if (pos < start) {
+                                if (this.verbose)
+                                    console.log("set video.currentTime pos=" + pos + ",start=" + start + ",end=" + end);
+                                video.currentTime = start;
+                            }
+                            if (pos > end) {
+                                if (this.verbose)
+                                    console.warn("chase frame pos=" + pos + ",start=" + start + ",end=" + end);
+                                video.currentTime = start;
+                            }
+                            if (pos - pre_pos != 0 && end - pos > 3) {
+                                if (this.verbose)
+                                    console.log("set end video.currentTime pos=" + pos + ",start=" + start + ",end=" + end);
+                                video.currentTime = end;
+                            }
+                            for (let i = 0; i < video.buffered.length - 1; i++) {
+                                let prestart = video.buffered.start(i);
+                                let preend = video.buffered.end(i);
+                                if (!sourcebuffer.updating) {
+                                    sourcebuffer.remove(prestart, preend);
+                                }
+                            }
+                            if (pos - start > 10 && !sourcebuffer.updating) {
+                                if (this.verbose)
+                                    console.warn("remove start pos=" + pos + ",start=" + start + ",end=" + end);
+                                sourcebuffer.remove(0, pos - 3);
+                            }
+                            if (end - pos > 10 && !sourcebuffer.updating) {
+                                if (this.verbose)
+                                    console.warn("remove end pos=" + pos + ",start=" + start + ",end=" + end);
+                                sourcebuffer.remove(0, end - 3);
+                            }
+                        }
+                        pre_pos = pos;
+                    }
+                }
+            }.bind(this);
+
+            this.ws.onmessage = function (e) {
+                //首帧为音视频信息
+                if (firstMessage) {
+                    firstMessage = false;
+                    let avframe = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(e.data)));
+                    if(this.verbose)
+                        console.log("avframe", avframe);
+                    initMediaSource(avframe);
+                    return;
+                }
+                this.frameQueue.push(e.data);
+                if (!sourcebuffer || sourcebuffer.updating) {
+                    return;
+                }
+                if (this.frameQueue.length === 1) {
+                    sourcebuffer.appendBuffer(this.frameQueue.shift());
+                } else {
+                    let byte_length = 0;
+                    for (const qnode of this.frameQueue) {
+                        byte_length += qnode.byteLength;
+                    }
+                    let mp4buf = new Uint8Array(byte_length);
+                    let offset = 0;
+                    for (const qnode of this.frameQueue) {
+                        let frame = new Uint8Array(qnode);
+                        mp4buf.set(frame, offset);
+                        offset += qnode.byteLength;
+                    }
+                    sourcebuffer.appendBuffer(mp4buf);
+                    this.frameQueue.splice(0, this.frameQueue.length);
+                }
+            }.bind(this);
+        }
+        JT1078Player.prototype.close = function () {
+            this.ws && this.ws.close();
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            var player = new JT1078Player("stream_live", "ws://127.0.0.1:15555/live.mp4?sim=11111111111&channel=1&token=123456");
+            player.open();
+        });
+      
+    </script>
+</body>
+</html>

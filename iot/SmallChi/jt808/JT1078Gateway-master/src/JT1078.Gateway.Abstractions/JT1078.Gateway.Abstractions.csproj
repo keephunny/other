@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\Info.props" />
+  <PropertyGroup>
+    <PackageId>JT1078.Gateway.Abstractions</PackageId>
+    <Product>JT1078.Gateway.Abstractions</Product>
+    <Description>基于JT1078Gateway的抽象库</Description>
+    <PackageReleaseNotes>基于JT1078Gateway的抽象库</PackageReleaseNotes>
+    <DocumentationFile>JT1078.Gateway.Abstractions.xml</DocumentationFile>
+	<PackageLicenseFile>LICENSE</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="IJT1078NormalGatewayBuilder.cs" />
+    <Compile Remove="IJT1078PackageConsumer.cs" />
+    <Compile Remove="IJT1078PackageProducer.cs" />
+    <Compile Remove="IJT1078QueueGatewayBuilder.cs" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+		<None Include="..\..\README.md" Pack="true" PackagePath="" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JT1078" Version="1.1.1-preview1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+  </ItemGroup>
+</Project>
